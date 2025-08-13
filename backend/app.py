@@ -82,7 +82,6 @@ async def generate_excuse_endpoint(request: ExcuseRequest):
             medium=request.medium,
             user_input=request.user_input
         )
-        
         return ExcuseResponse(
             excuse=excuse,
             context=request.context,

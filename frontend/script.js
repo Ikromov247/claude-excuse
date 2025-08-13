@@ -14,25 +14,10 @@ let state = {
     availableEvents: []
 };
 
-// DOM elements
-const step1 = document.getElementById('step1');
-const step2 = document.getElementById('step2');
-const step3 = document.getElementById('step3');
-const customContainer = document.getElementById('customContainer');
-const customLink = document.getElementById('customLink');
-const backLink = document.getElementById('backLink');
-const customInput = document.getElementById('customInput');
-const customGenerate = document.getElementById('customGenerate');
-const eventOptions = document.getElementById('eventOptions');
-const generateBtn = document.getElementById('generateBtn');
-const regenerateBtn = document.getElementById('regenerateBtn');
-const excuseContainer = document.getElementById('excuseContainer');
-const excuseList = document.getElementById('excuseList');
-const resetBtn = document.getElementById('resetBtn');
-const copyBtn = document.getElementById('copyBtn');
-const copyFeedback = document.getElementById('copyFeedback');
-const loadingSpinner = document.getElementById('loadingSpinner');
-const progressDots = document.querySelectorAll('.progress-dot');
+// DOM elements - will be initialized after DOM loads
+let step1, step2, step3, customContainer, customLink, backLink, customInput, customGenerate;
+let eventOptions, generateBtn, regenerateBtn, excuseContainer, excuseList, resetBtn;
+let copyBtn, copyFeedback, loadingSpinner, progressDots;
 
 // Utility functions
 function showLoading() {
@@ -124,10 +109,18 @@ async function generateExcuse() {
 // UI functions
 function displayExcuse(excuse) {
     console.log('Displaying excuse:', excuse); // Debug log
+    console.log('excuseList element:', excuseList); // Debug log
+    console.log('excuseContainer element:', excuseContainer); // Debug log
     
     if (!excuse || typeof excuse !== 'string') {
         console.error('Invalid excuse data:', excuse);
         showError('Received invalid excuse data');
+        return;
+    }
+    
+    if (!excuseList || !excuseContainer) {
+        console.error('DOM elements not found:', { excuseList, excuseContainer });
+        showError('Page not fully loaded');
         return;
     }
     
@@ -141,11 +134,19 @@ function displayExcuse(excuse) {
     
     excuseCard.appendChild(excuseTextDiv);
     
+    // Clear and append the new excuse
     excuseList.innerHTML = '';
     excuseList.appendChild(excuseCard);
     
-    excuseContainer.classList.add('active');
-    resetBtn.classList.add('active');
+    console.log('Excuse card appended, children count:', excuseList.children.length); // Debug log
+    
+    // Add a small delay to ensure DOM changes are applied before animation
+    requestAnimationFrame(() => {
+        excuseContainer.style.display = 'block'; // Force display to override any inline styles
+        excuseContainer.classList.add('active');
+        resetBtn.classList.add('active');
+        console.log('Container activated, visible:', getComputedStyle(excuseContainer).display !== 'none'); // Debug log
+    });
 }
 
 function populateEventOptions(events) {
@@ -253,6 +254,26 @@ async function copyToClipboard(text) {
 
 // Event listeners
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize DOM elements
+    step1 = document.getElementById('step1');
+    step2 = document.getElementById('step2');
+    step3 = document.getElementById('step3');
+    customContainer = document.getElementById('customContainer');
+    customLink = document.getElementById('customLink');
+    backLink = document.getElementById('backLink');
+    customInput = document.getElementById('customInput');
+    customGenerate = document.getElementById('customGenerate');
+    eventOptions = document.getElementById('eventOptions');
+    generateBtn = document.getElementById('generateBtn');
+    regenerateBtn = document.getElementById('regenerateBtn');
+    excuseContainer = document.getElementById('excuseContainer');
+    excuseList = document.getElementById('excuseList');
+    resetBtn = document.getElementById('resetBtn');
+    copyBtn = document.getElementById('copyBtn');
+    copyFeedback = document.getElementById('copyFeedback');
+    loadingSpinner = document.getElementById('loadingSpinner');
+    progressDots = document.querySelectorAll('.progress-dot');
+    
     // Handle context selection (Step 1)
     step1.querySelectorAll('.toggle-btn').forEach(btn => {
         btn.addEventListener('click', function() {
