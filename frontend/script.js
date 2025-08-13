@@ -1,5 +1,7 @@
-// Configuration
-const API_BASE_URL = 'http://localhost:8000/api';
+// Configuration - dynamically determine API base URL
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? `http://${window.location.hostname}:10000/api`
+    : `${window.location.protocol}//${window.location.host}/api`;
 
 // State management
 let state = {
