@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excuse Generator</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Excuse Generator ✨</h1>
+        
+        <div class="progress-indicator">
+            <div class="progress-dot active"></div>
+            <div class="progress-dot"></div>
+            <div class="progress-dot"></div>
+        </div>
+
+        <!-- Step 1: Context -->
+        <div class="step active" id="step1">
+            <div class="step-label">Where are you supposed to be?</div>
+            <div class="button-group">
+                <button class="toggle-btn" data-value="work">Work</button>
+                <button class="toggle-btn" data-value="university">University</button>
+                <button class="toggle-btn" data-value="school">School</button>
+                <button class="toggle-btn" data-value="social">Social</button>
+                <button class="toggle-btn" data-value="family">Family</button>
+                <button class="toggle-btn" data-value="medical">Medical</button>
+            </div>
+            <a href="#" class="custom-link" id="customLink">→ or describe your situation</a>
+        </div>
+
+        <!-- Custom Input -->
+        <div class="custom-input-container" id="customContainer">
+            <div class="step-label">Describe your situation</div>
+            <div class="input-wrapper">
+                <input type="text" class="custom-input" id="customInput" 
+                       placeholder="e.g., family dinner, doctor's appointment...">
+                <button class="generate-btn" id="customGenerate">Generate</button>
+            </div>
+            <a href="#" class="custom-link" id="backLink">← back to options</a>
+        </div>
+
+        <!-- Step 2: Situation -->
+        <div class="step" id="step2">
+            <div class="step-label">What are you late for?</div>
+            <div class="button-group" id="eventOptions">
+                <!-- Dynamic options will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Step 3: Format -->
+        <div class="step" id="step3">
+            <div class="step-label">How do you need to communicate?</div>
+            <div class="button-group">
+                <button class="toggle-btn" data-value="text">Text Message</button>
+                <button class="toggle-btn" data-value="email">Email</button>
+            </div>
+            <button class="generate-btn" id="generateBtn" style="width: 100%; margin-top: 20px;">
+                Generate Excuse
+            </button>
+        </div>
+
+        <!-- Excuses Display -->
+        <div class="excuse-container" id="excuseContainer">
+            <div class="excuse-header">
+                <span class="excuse-title">Your Excuse</span>
+                <div class="excuse-actions">
+                    <button class="copy-btn" id="copyBtn" title="Copy to clipboard">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="currentColor" stroke-width="2" fill="none"/>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="currentColor" stroke-width="2" fill="none"/>
+                        </svg>
+                    </button>
+                    <button class="regenerate-btn" id="regenerateBtn" title="Regenerate">↻</button>
+                </div>
+            </div>
+            <div id="excuseList"></div>
+            <div class="copy-feedback" id="copyFeedback">Copied to clipboard!</div>
+        </div>
+
+        <!-- Reset Button -->
+        <button class="reset-btn" id="resetBtn">Start Over</button>
+
+        <!-- Loading Spinner -->
+        <div class="loading-spinner" id="loadingSpinner">
+            <div class="spinner"></div>
+            <div class="loading-text">Generating excuse...</div>
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>

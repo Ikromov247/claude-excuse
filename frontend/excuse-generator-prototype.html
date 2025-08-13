@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excuse Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #1a1a1a;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .step {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.4s ease;
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .step-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            min-width: 100px;
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-btn:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .toggle-btn.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .custom-link {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-block;
+            margin-top: 10px;
+            transition: opacity 0.3s ease;
+        }
+
+        .custom-link:hover {
+            opacity: 0.7;
+        }
+
+        .custom-input-container {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.4s ease;
+        }
+
+        .custom-input-container.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .custom-input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: border-color 0.3s ease;
+        }
+
+        .custom-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .generate-btn {
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .generate-btn:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+
+        .generate-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .excuse-container {
+            display: none;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .excuse-container.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .excuse-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .excuse-title {
+            font-size: 14px;
+            color: #666;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .regenerate-btn {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-size: 20px;
+            transition: transform 0.3s ease;
+            padding: 5px;
+        }
+
+        .regenerate-btn:hover {
+            transform: rotate(180deg);
+        }
+
+        .excuse-card {
+            background: #f8f9ff;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+            animation: slideIn 0.4s ease;
+        }
+
+        .excuse-text {
+            color: #333;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        .reset-btn {
+            display: none;
+            margin-top: 20px;
+            width: 100%;
+            padding: 12px;
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .reset-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .reset-btn.active {
+            display: block;
+        }
+
+        .progress-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 30px;
+        }
+
+        .progress-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            transition: all 0.3s ease;
+        }
+
+        .progress-dot.active {
+            background: #667eea;
+            width: 24px;
+            border-radius: 4px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Excuse Generator ✨</h1>
+        
+        <div class="progress-indicator">
+            <div class="progress-dot active"></div>
+            <div class="progress-dot"></div>
+            <div class="progress-dot"></div>
+        </div>
+
+        <!-- Step 1: Context -->
+        <div class="step active" id="step1">
+            <div class="step-label">Where are you supposed to be?</div>
+            <div class="button-group">
+                <button class="toggle-btn" data-value="work">Work</button>
+                <button class="toggle-btn" data-value="university">University</button>
+                <button class="toggle-btn" data-value="school">School</button>
+            </div>
+            <a href="#" class="custom-link" id="customLink">→ or describe your situation</a>
+        </div>
+
+        <!-- Custom Input -->
+        <div class="custom-input-container" id="customContainer">
+            <div class="step-label">Describe your situation</div>
+            <div class="input-wrapper">
+                <input type="text" class="custom-input" id="customInput" 
+                       placeholder="e.g., family dinner, doctor's appointment...">
+                <button class="generate-btn" id="customGenerate">Generate</button>
+            </div>
+            <a href="#" class="custom-link" id="backLink">← back to options</a>
+        </div>
+
+        <!-- Step 2: Situation -->
+        <div class="step" id="step2">
+            <div class="step-label">What are you late for?</div>
+            <div class="button-group">
+                <button class="toggle-btn" data-value="meeting">Meeting</button>
+                <button class="toggle-btn" data-value="class">Class</button>
+                <button class="toggle-btn" data-value="general">General</button>
+            </div>
+        </div>
+
+        <!-- Step 3: Format -->
+        <div class="step" id="step3">
+            <div class="step-label">How do you need to communicate?</div>
+            <div class="button-group">
+                <button class="toggle-btn" data-value="text">Text Message</button>
+                <button class="toggle-btn" data-value="email">Email</button>
+            </div>
+            <button class="generate-btn" id="generateBtn" style="width: 100%; margin-top: 20px;">
+                Generate Excuse
+            </button>
+        </div>
+
+        <!-- Excuses Display -->
+        <div class="excuse-container" id="excuseContainer">
+            <div class="excuse-header">
+                <span class="excuse-title">Your Excuse</span>
+                <button class="regenerate-btn" id="regenerateBtn" title="Regenerate">↻</button>
+            </div>
+            <div id="excuseList"></div>
+        </div>
+
+        <!-- Reset Button -->
+        <button class="reset-btn" id="resetBtn">Start Over</button>
+    </div>
+
+    <script>
+        // State management
+        let state = {
+            context: null,
+            situation: null,
+            format: null,
+            customSituation: null,
+            isCustom: false,
+            currentStep: 1
+        };
+
+        // Excuse templates
+        const excuses = {
+            work: {
+                meeting: {
+                    text: [
+                        "Sorry, running 10 mins late. Unexpected issue with my car - on my way now!",
+                        "Apologies - train delays this morning. Should be there in 15 minutes.",
+                        "Hi team, stuck in unusual traffic due to an accident. ETA 10 minutes."
+                    ],
+                    email: [
+                        "Dear Team,\n\nI apologize for the delay in joining today's meeting. I'm experiencing unexpected transportation issues but am en route and should arrive within 10-15 minutes.\n\nBest regards",
+                        "Hello,\n\nI wanted to let you know I'm running slightly behind schedule due to unforeseen circumstances. I'll join the meeting as soon as possible, approximately 10 minutes from now.\n\nApologies for any inconvenience."
+                    ]
+                },
+                general: {
+                    text: [
+                        "Running late this morning - unexpected delay. Be there soon!",
+                        "Sorry, having some morning complications. On my way, about 15 mins out.",
+                        "Apologies for the delay - dealing with an urgent personal matter. Will be there shortly."
+                    ],
+                    email: [
+                        "Good morning,\n\nI'm writing to inform you that I'll be arriving approximately 15 minutes late today due to unforeseen circumstances.\n\nThank you for your understanding.",
+                        "Hello,\n\nI apologize for the short notice, but I'm experiencing a delay this morning. I expect to arrive within the next 20 minutes.\n\nBest regards"
+                    ]
+                }
+            },
+            university: {
+                class: {
+                    text: [
+                        "Hi Professor, running late to class due to transit delays. Will slip in quietly!",
+                        "Sorry, having printer issues with the assignment. On my way now, 10 mins.",
+                        "Overslept my alarm - so sorry! Rushing to class now."
+                    ],
+                    email: [
+                        "Dear Professor,\n\nI apologize for being late to today's class. I'm experiencing unexpected transportation difficulties but will arrive as soon as possible.\n\nSincerely",
+                        "Hello Professor,\n\nI wanted to notify you that I'll be arriving late to class due to unavoidable circumstances. I'll enter quietly to minimize disruption.\n\nThank you for understanding."
+                    ]
+                }
+            },
+            school: {
+                class: {
+                    text: [
+                        "Running late - family car trouble. Parent dropping me off soon.",
+                        "Sorry, missed the bus. Getting a ride now, be there in 15.",
+                        "Delayed this morning due to a family situation. On the way."
+                    ],
+                    email: [
+                        "Dear Teacher,\n\nThis is to inform you that I will be late to school today due to transportation issues. I should arrive within 20 minutes.\n\nThank you.",
+                        "Hello,\n\nI apologize for my tardiness today. We're experiencing car trouble, but I'm on my way and will be there shortly.\n\nSorry for the inconvenience."
+                    ]
+                }
+            }
+        };
+
+        const customExcuses = {
+            text: [
+                "Running late - unexpected situation came up. Will be there as soon as I can!",
+                "So sorry, dealing with something urgent. Should be able to make it in about 20 minutes.",
+                "Apologies for the delay - having some complications this morning. On my way!"
+            ],
+            email: [
+                "Hello,\n\nI apologize for the delay. An unexpected situation has arisen that requires my immediate attention. I will join as soon as possible, estimated within 15-20 minutes.\n\nThank you for your patience.",
+                "Dear All,\n\nI'm writing to inform you that I'll be arriving late due to unforeseen circumstances. I apologize for any inconvenience this may cause.\n\nBest regards"
+            ]
+        };
+
+        // DOM elements
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        const step3 = document.getElementById('step3');
+        const customContainer = document.getElementById('customContainer');
+        const customLink = document.getElementById('customLink');
+        const backLink = document.getElementById('backLink');
+        const customInput = document.getElementById('customInput');
+        const customGenerate = document.getElementById('customGenerate');
+        const generateBtn = document.getElementById('generateBtn');
+        const regenerateBtn = document.getElementById('regenerateBtn');
+        const excuseContainer = document.getElementById('excuseContainer');
+        const excuseList = document.getElementById('excuseList');
+        const resetBtn = document.getElementById('resetBtn');
+        const progressDots = document.querySelectorAll('.progress-dot');
+
+        // Update progress indicator
+        function updateProgress(step) {
+            progressDots.forEach((dot, index) => {
+                if (index < step) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+
+        // Handle context selection (Step 1)
+        step1.querySelectorAll('.toggle-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                step1.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('selected'));
+                this.classList.add('selected');
+                state.context = this.dataset.value;
+                state.isCustom = false;
+                setTimeout(() => showStep2(), 300);
+            });
+        });
+
+        // Handle custom link
+        customLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            step1.style.display = 'none';
+            customContainer.classList.add('active');
+            state.isCustom = true;
+            customInput.focus();
+        });
+
+        // Handle back link
+        backLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            customContainer.classList.remove('active');
+            setTimeout(() => {
+                customContainer.style.display = 'none';
+                step1.style.display = 'block';
+                step1.classList.add('active');
+            }, 300);
+            state.isCustom = false;
+            customInput.value = '';
+        });
+
+        // Handle custom generate
+        customGenerate.addEventListener('click', function() {
+            if (customInput.value.trim()) {
+                state.customSituation = customInput.value.trim();
+                state.isCustom = true;
+                setTimeout(() => showStep3FromCustom(), 300);
+            }
+        });
+
+        // Handle situation selection (Step 2)
+        step2.querySelectorAll('.toggle-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                step2.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('selected'));
+                this.classList.add('selected');
+                state.situation = this.dataset.value;
+                setTimeout(() => showStep3(), 300);
+            });
+        });
+
+        // Handle format selection (Step 3)
+        step3.querySelectorAll('.toggle-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                step3.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('selected'));
+                this.classList.add('selected');
+                state.format = this.dataset.value;
+                generateBtn.disabled = false;
+            });
+        });
+
+        // Show Step 2
+        function showStep2() {
+            step1.classList.remove('active');
+            customContainer.classList.remove('active');
+            setTimeout(() => {
+                step1.style.display = 'none';
+                customContainer.style.display = 'none';
+                step2.style.display = 'block';
+                setTimeout(() => {
+                    step2.classList.add('active');
+                    state.currentStep = 2;
+                    updateProgress(2);
+                }, 50);
+            }, 400);
+        }
+
+        // Show Step 3
+        function showStep3() {
+            step2.classList.remove('active');
+            setTimeout(() => {
+                step2.style.display = 'none';
+                step3.style.display = 'block';
+                generateBtn.disabled = true;
+                setTimeout(() => {
+                    step3.classList.add('active');
+                    state.currentStep = 3;
+                    updateProgress(3);
+                }, 50);
+            }, 400);
+        }
+
+        // Show Step 3 from custom
+        function showStep3FromCustom() {
+            customContainer.classList.remove('active');
+            setTimeout(() => {
+                customContainer.style.display = 'none';
+                step3.style.display = 'block';
+                generateBtn.disabled = true;
+                setTimeout(() => {
+                    step3.classList.add('active');
+                    state.currentStep = 3;
+                    updateProgress(3);
+                }, 50);
+            }, 400);
+        }
+
+        // Generate excuse
+        function generateExcuse() {
+            let excusePool;
+            
+            if (state.isCustom) {
+                excusePool = customExcuses[state.format];
+            } else {
+                const contextExcuses = excuses[state.context];
+                if (contextExcuses) {
+                    const situationExcuses = contextExcuses[state.situation] || contextExcuses.general || contextExcuses.class;
+                    if (situationExcuses) {
+                        excusePool = situationExcuses[state.format];
+                    }
+                }
+            }
+
+            if (!excusePool || excusePool.length === 0) {
+                excusePool = customExcuses[state.format];
+            }
+
+            const randomExcuse = excusePool[Math.floor(Math.random() * excusePool.length)];
+            
+            const excuseCard = document.createElement('div');
+            excuseCard.className = 'excuse-card';
+            excuseCard.innerHTML = `<div class="excuse-text">${randomExcuse.replace(/\n/g, '<br>')}</div>`;
+            
+            excuseList.innerHTML = '';
+            excuseList.appendChild(excuseCard);
+            
+            excuseContainer.classList.add('active');
+            resetBtn.classList.add('active');
+        }
+
+        // Handle generate button
+        generateBtn.addEventListener('click', generateExcuse);
+
+        // Handle regenerate button
+        regenerateBtn.addEventListener('click', generateExcuse);
+
+        // Handle reset button
+        resetBtn.addEventListener('click', function() {
+            state = {
+                context: null,
+                situation: null,
+                format: null,
+                customSituation: null,
+                isCustom: false,
+                currentStep: 1
+            };
+            
+            // Reset all selections
+            document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('selected'));
+            customInput.value = '';
+            
+            // Hide everything
+            step2.classList.remove('active');
+            step3.classList.remove('active');
+            customContainer.classList.remove('active');
+            excuseContainer.classList.remove('active');
+            resetBtn.classList.remove('active');
+            
+            setTimeout(() => {
+                step2.style.display = 'none';
+                step3.style.display = 'none';
+                customContainer.style.display = 'none';
+                excuseContainer.style.display = 'none';
+                step1.style.display = 'block';
+                setTimeout(() => {
+                    step1.classList.add('active');
+                    updateProgress(1);
+                }, 50);
+            }, 400);
+        });
+
+        // Enable generate on Enter for custom input
+        customInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && this.value.trim()) {
+                customGenerate.click();
+            }
+        });
+    </script>
+</body>
+</html>
