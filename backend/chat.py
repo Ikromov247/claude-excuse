@@ -24,7 +24,7 @@ async def generate_excuse(
         message = await client.messages.create(
             model="claude-3-5-haiku-20241022",
             max_tokens=1000,
-            temperature=1,
+            temperature=0.2,
             system=SYSTEM_PROMPT,
             messages=[
                 {
